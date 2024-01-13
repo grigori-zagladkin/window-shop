@@ -74,6 +74,8 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     env_file:
       - ./server/.env
+    depends_on:
+      - postgres
 
 networks:
   postgres:
