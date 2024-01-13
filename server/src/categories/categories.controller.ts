@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpStatus,
+    Put,
+    ValidationPipe,
+    UsePipes
+} from '@nestjs/common';
+import {CategoriesService} from './categories.service';
+import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {Category} from "@prisma/client";
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+    constructor(private readonly categoriesService: CategoriesService) {
+    }
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
-  }
+    @ApiOperation({summary: "2XX"})
+    @ApiResponse({status: HttpStatus.CREATED})
+    @Post()
+    async create(): Promise<number> {
+        return await this.categoriesService.create();
+    }
 
-  @Get()
-  findAll() {
-    return this.categoriesService.findAll();
-  }
+    @ApiOperation({summary: ''})
+    @ApiResponse({status: HttpStatus.OK})
+    @Get()
+    async findAll(): Promise<Category[]> {
+        return await this.categoriesService.getAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
-  }
+    @UsePipes(new ValidationPipe())
+    @ApiOperation({summary: ''})
+    @ApiResponse({status: HttpStatus.OK})
+    @Get(':slug')
+    async getBySlug(@Param('slug') slug: string) {
+        return await this.categoriesService.getBySlug(slug)
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoriesService.update(+id, updateCategoryDto);
-  }
+    @ApiOperation({ summary: '' })
+    @ApiResponse({ status: HttpStatus.OK })
+    @Put()
+    async update() {
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
-  }
+    }
+
+    @ApiOperation({ summary: '' })
+    @ApiResponse({ status: HttpStatus.OK })
+    @Delete(':id')
+    async delete(@Param('id') id: string) {
+        return await this.categoriesService.delete(+id);
+    }
 }

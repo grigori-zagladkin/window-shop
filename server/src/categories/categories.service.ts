@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import {Injectable} from '@nestjs/common';
+import {PrismaService} from "../prisma.service";
+import CategoryDto from "./category.dto";
+import {Category} from "@prisma/client";
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
-  }
+    constructor(private readonly prisma: PrismaService) {
+    }
 
-  findAll() {
-    return `This action returns all categories`;
-  }
+    async create(): Promise<number> {
+        return this.prisma.category.create({
+            data: {
+                title: '',
+                slug: '',
+                description: '',
+                image: ''
+            }
+        }).then(data => data.id);
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
+    async getAll(): Promise<Category[]> {
+        return this.prisma.category.findMany();
+    }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
+    async getBySlug(slug: string): Promise<Category | void> {
+        return this.prisma.category.findUniqueOrThrow();
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
+    async getById(id: number): Promise<Category | void> {
+        return this.prisma.category.findUniqueOrThrow({
+            where: {
+                id
+            }
+        })
+    }
+
+    async update(id: number, dto: CategoryDto): Promise<Category | void> {
+        const candidate = await this.getById(id);
+        if (candidate) {
+            return this.prisma.category.update({
+                where: {
+                    id
+                },
+                data: {
+                    ...dto
+                }
+            })
+        }
+    }
+
+    async delete(id: number): Promise<boolean | void> {
+        const candidate = await this.getById(id);
+        if (candidate) {
+            return this.prisma.category.delete({
+                where: {
+                    id
+                }
+            }).then(res => true);
+        }
+    }
 }
