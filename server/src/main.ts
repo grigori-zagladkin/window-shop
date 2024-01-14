@@ -1,24 +1,31 @@
-import {NestFactory} from '@nestjs/core';
-import {AppModule} from './app.module';
-import {ConfigService} from "@nestjs/config";
-import {INestApplication, Logger} from "@nestjs/common";
-import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { INestApplication, Logger } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-    const app: INestApplication<AppModule> = await NestFactory.create(AppModule);
+  const app: INestApplication<AppModule> = await NestFactory.create(AppModule);
 
-    const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService);
 
-    app.setGlobalPrefix('api');
-    app.enableCors();
+  app.setGlobalPrefix('api');
+  app.enableCors();
 
-    const config = new DocumentBuilder().setTitle('').setDescription('').setVersion('1.0').addTag('').build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+  const config = new DocumentBuilder()
+    .setTitle('')
+    .setDescription('')
+    .setVersion('1.0')
+    .addTag('')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
-    const PORT = configService.getOrThrow('PORT') as number ?? 1000;
+  const PORT = (configService.getOrThrow('PORT') as number) ?? 1000;
 
-    await app.listen(PORT, () => Logger.log(`nestjs app success start on port - ${PORT}`));
+  await app.listen(PORT, () =>
+    Logger.log(`nestjs app success start on port - ${PORT}`),
+  );
 }
 
 bootstrap();
