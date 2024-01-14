@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -17,12 +18,70 @@ model Category {
   image       String
   description String
 
-  products Product[]
+  products   Product[]
+  attributes Attribute[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  @@map("categories")
 }
 
 model Product {
+  id            Int      @id @default(autoincrement())
+  slug          String   @unique()
+  title         String
+  description   String
+  count         Int
+  images        String[]
+  price         Int
+  isSale        Boolean? @map("is_sale")
+  priceWithSale Int?     @map("price_with_sale")
+  attributes    Json
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?      @map("category_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  @@map("products")
+}
+
+model Attribute {
   id Int @id @default(autoincrement())
 
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+  title           String
+  suggestVariants String[] @map("suggest_variants")
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int      @map("category_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  @@map("attributes")
+}
+
+model Promo {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  @@map("promos")
+}
+
+model Account {
+  id       Int    @id @default(autoincrement())
+  login    String @unique()
+  password String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  @@map("accounts")
 }
