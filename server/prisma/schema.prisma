@@ -37,6 +37,7 @@ model Product {
   price         Int
   isSale        Boolean? @map("is_sale")
   priceWithSale Int?     @map("price_with_sale")
+  saleSize      Int?     @map("sale_size")
   attributes    Json
 
   category   Category? @relation(fields: [categoryId], references: [id])
