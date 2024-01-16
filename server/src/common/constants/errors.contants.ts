@@ -4,3 +4,4 @@ export const UNSUCCESS_USER_CREATE = 'Не удалось создать пол�
 export const USER_NOT_FOUND = 'Не удалось пользователя с указанным логином';
 export const UNSUCCESS_AUTH = 'Ошибка во время авторизации';
 export const ATTRIBUTE_NOT_FOUND = 'Не удалось найти атрибут';
+export const PRODUCT_NOT_FOUND = 'Не удалось найти указанный товар';

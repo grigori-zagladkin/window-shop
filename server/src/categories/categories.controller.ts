@@ -10,14 +10,22 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Category } from '@prisma/client';
+import { Auth } from '../auth/auth.decorator';
 
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @Auth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: '2XX' })
   @ApiResponse({ status: HttpStatus.CREATED })
   @Post()
@@ -40,11 +48,16 @@ export class CategoriesController {
     return await this.categoriesService.getBySlug(slug);
   }
 
+  @Auth()
+  @ApiBearerAuth()
+  @UsePipes(new ValidationPipe())
   @ApiOperation({ summary: '' })
   @ApiResponse({ status: HttpStatus.OK })
   @Put()
   async update() {}
 
+  @Auth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: '' })
   @ApiResponse({ status: HttpStatus.OK })
   @Delete(':id')

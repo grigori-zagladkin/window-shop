@@ -20,7 +20,7 @@ import { Auth } from '../auth/auth.decorator';
 import AttributeDto from './attribute.dto';
 import { Attribute } from '@prisma/client';
 
-@ApiTags()
+@ApiTags('Атрибуты товаров')
 @Controller('attributes')
 export class AttributesController {
   constructor(private readonly attributesService: AttributesService) {}
